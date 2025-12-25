@@ -10,12 +10,9 @@ depends=(
   breeze-plus
   darkly-bin
   eza
-  fish
   fontconfig
-  kitty
   matugen-bin
   otf-space-grotesk
-  starship
   ttf-jetbrains-mono-nerd
   ttf-material-symbols-variable-git
   ttf-readex-pro
