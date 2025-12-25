@@ -7,5 +7,6 @@ license=(None)
 depends=(
   hyprland
   hyprsunset
+  nwg-displays
   wl-clipboard
 )
