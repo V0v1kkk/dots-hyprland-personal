@@ -1,0 +1,14 @@
+#!/bin/bash
+# Auto-send Wayland clipboard to phone via KDE Connect
+# ONLY runs in Hyprland to avoid breaking KDE Plasma
+
+# Exit if not in Hyprland
+if [ "$XDG_CURRENT_DESKTOP" != "Hyprland" ]; then
+  exit 0
+fi
+
+# Your Galaxy S23 Ultra device ID from KDE Connect
+DEVICE_ID="e99eac7b_2902_47fa_944f_b2a564dcc5e3"
+
+# Watch Wayland clipboard and send to phone
+wl-paste -t text --watch bash -c "kdeconnect-cli -d $DEVICE_ID --share-text \"\$(</dev/stdin)\""

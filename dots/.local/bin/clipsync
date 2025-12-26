@@ -1,0 +1,40 @@
+#!/usr/bin/env sh
+# Two-way clipboard synchronization between Wayland and X11
+# ONLY runs in Hyprland to avoid breaking KDE Plasma
+
+# Exit if not in Hyprland
+if [ "$XDG_CURRENT_DESKTOP" != "Hyprland" ]; then
+  exit 0
+fi
+
+insert() {
+  value=$(cat)
+  wValue="$(wl-paste 2>/dev/null)"
+  xValue="$(xclip -o -selection clipboard 2>/dev/null)"
+
+  if [ "$value" != "$wValue" ]; then
+    echo -n "$value" | wl-copy
+  fi
+
+  if [ "$value" != "$xValue" ]; then
+    echo -n "$value" | xclip -selection clipboard
+  fi
+}
+
+watch() {
+  # Wayland -> X11
+  wl-paste --type text --watch "$0" insert &
+
+  # X11 -> Wayland
+  while clipnotify; do
+    xclip -o -selection clipboard | "$0" insert
+  done &
+}
+
+kill() {
+  pkill -f "wl-paste --type text --watch"
+  pkill clipnotify
+  pkill -f "clipsync"
+}
+
+"$@"

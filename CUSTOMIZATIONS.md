@@ -15,6 +15,7 @@ This document describes all modifications made in the end-4/dots-hyprland fork o
   - [7. WezTerm matugen color template](#7-wezterm-matugen-color-template)
   - [8. Custom autostart apps and keybinds](#8-custom-autostart-apps-and-keybinds)
   - [9. Add documentation for fork customizations](#9-add-documentation-for-fork-customizations)
+  - [10. Keyboard layouts and KDE Connect clipboard sync](#10-keyboard-layouts-and-kde-connect-clipboard-sync)
 - [Integration Guide](#integration-guide)
 - [Rollback Instructions](#rollback-instructions)
 
@@ -461,6 +462,82 @@ Created comprehensive English documentation for all fork customizations.
 - Clear separation between upstream and personal customizations
 - Easy onboarding for future self when returning to project
 - Simplified troubleshooting with documented changes
+
+---
+
+### 10. Keyboard layouts and KDE Connect clipboard sync
+
+**Date**: 26 Dec 2025
+
+**Modified files**:
+- `dots/.config/hypr/custom/keyboard.conf` (NEW)
+- `dots/.config/hypr/custom/execs.conf` (UPDATED)
+- `dots/.config/hypr/hyprland.conf` (UPDATED - added source)
+- `dots/.local/bin/clipsync` (NEW, executable)
+- `dots/.local/bin/kdeconnect-clipboard-watch` (NEW, executable)
+
+**Description**:
+
+#### Keyboard Layouts Configuration
+
+Added US + RU layout switching via `custom/keyboard.conf`:
+
+**Layout settings**:
+- Layouts: `us,ru`
+- Primary switch: **Caps Lock** (`grp:caps_toggle`)
+- Secondary switch: **Insert** key (keyboard-agnostic, works for all keyboards)
+
+**Keyboard repeat**:
+- Rate: 50
+- Delay: 300
+
+**Requirements**:
+- Package: `jq` (for Insert key script)
+
+**Insert key implementation**:
+```bash
+bind = , Insert, exec, for kbd in $(hyprctl devices -j | jq -r '.keyboards[].name'); do hyprctl switchxkblayout $kbd next; done
+```
+
+#### KDE Connect Clipboard Sync (Hyprland only)
+
+Created two scripts with **Hyprland-only guards** to prevent breaking KDE Plasma:
+
+**1. clipsync** (`~/.local/bin/clipsync`):
+- Two-way clipboard sync: XWayland ↔ Wayland
+- Prevents clipboard issues between Firefox (XWayland) and VS Code (Wayland)
+- Guard: `if [ "$XDG_CURRENT_DESKTOP" != "Hyprland" ]; then exit 0; fi`
+
+**2. kdeconnect-clipboard-watch** (`~/.local/bin/kdeconnect-clipboard-watch`):
+- Auto-send PC clipboard → Phone (Galaxy S23 Ultra)
+- Device ID: `e99eac7b_2902_47fa_944f_b2a564dcc5e3`
+- Watches Wayland clipboard with `wl-paste --watch`
+- Guard: `if [ "$XDG_CURRENT_DESKTOP" != "Hyprland" ]; then exit 0; fi`
+
+**Autostart configuration**:
+Added to `custom/execs.conf`:
+```bash
+exec-once = ~/.local/bin/clipsync watch
+exec-once = ~/.local/bin/kdeconnect-clipboard-watch
+```
+
+**What works**:
+- ✅ PC → Phone: automatic clipboard sync
+- ✅ Phone → PC: use "Send clipboard" on phone
+- ✅ XWayland ↔ Wayland: seamless copy-paste between different app types
+- ✅ KDE Plasma: scripts exit immediately, don't interfere
+
+**Rationale**:
+- Keyboard layouts match current KDE configuration (Caps Lock + Insert)
+- KDE Connect clipboard sync essential for mobile workflow
+- Hyprland-only guards prevent breaking existing KDE setup
+- Scripts in custom/ for easy testing and modification
+
+**Impact**:
+- Keyboard layouts ready to use immediately after Hyprland installation
+- Clipboard sync between Wayland/XWayland apps works automatically
+- Phone integration works same as in KDE
+- No risk of breaking KDE Plasma clipboard functionality
 
 ---
 
