@@ -16,6 +16,7 @@ This document describes all modifications made in the end-4/dots-hyprland fork o
   - [8. Custom autostart apps and keybinds](#8-custom-autostart-apps-and-keybinds)
   - [9. Add documentation for fork customizations](#9-add-documentation-for-fork-customizations)
   - [10. Keyboard layouts and KDE Connect clipboard sync](#10-keyboard-layouts-and-kde-connect-clipboard-sync)
+  - [11. Add Catppuccin themes (GTK and cursors)](#11-add-catppuccin-themes-gtk-and-cursors)
 - [Integration Guide](#integration-guide)
 - [Rollback Instructions](#rollback-instructions)
 
@@ -538,6 +539,62 @@ exec-once = ~/.local/bin/kdeconnect-clipboard-watch
 - Clipboard sync between Wayland/XWayland apps works automatically
 - Phone integration works same as in KDE
 - No risk of breaking KDE Plasma clipboard functionality
+
+---
+
+### 11. Add Catppuccin themes (GTK and cursors)
+
+**Date**: 26 Dec 2025
+
+**Added files**:
+- `dots/.themes/Catppuccin-Macchiato-Standard-Lavender-Dark/` (~2.8MB)
+- `dots/.themes/Catppuccin-Macchiato-Standard-Lavender-Dark-hdpi/` (~228KB)
+- `dots/.themes/Catppuccin-Macchiato-Standard-Lavender-Dark-xhdpi/` (~228KB)
+- `dots/.icons/Catppuccin-Macchiato-Lavender-Cursors/` (~6.5MB)
+
+**Total size**: ~10MB
+
+**Description**:
+
+Added Catppuccin Macchiato themes to fork for easy deployment across devices.
+
+**What's included**:
+- ✅ GTK themes (3 variants: standard, hdpi, xhdpi)
+- ✅ Cursor theme (Catppuccin-Macchiato-Lavender-Cursors)
+
+**What's NOT included** (due to size):
+- ❌ Icon theme `Catppuccin-Macchiato` (~161MB)
+  - **Download from**: https://github.com/catppuccin/gtk
+  - Install to: `~/.icons/Catppuccin-Macchiato/`
+  - Or via package manager: `yay -S catppuccin-gtk-theme-macchiato catppuccin-cursors-macchiato`
+
+**Installation**:
+Themes in `dots/.themes/` and `dots/.icons/` are automatically copied during `./setup install`.
+
+**Manual installation** (if needed):
+```bash
+# GTK themes
+cp -r dots/.themes/* ~/.themes/
+
+# Cursors
+cp -r dots/.icons/* ~/.icons/
+
+# Icon theme (manual download required)
+# Download from https://github.com/catppuccin/gtk/releases
+# Extract to ~/.icons/Catppuccin-Macchiato/
+```
+
+**Rationale**:
+- Having themes in fork ensures consistent look across all devices
+- Small themes (GTK, cursors) included for convenience (~10MB)
+- Large icon theme excluded to keep repository lightweight
+- Icons easy to install separately from official source
+
+**Impact**:
+- GTK apps use Catppuccin Macchiato theme immediately
+- Cursor theme available without manual download
+- Icon theme needs one-time manual installation
+- Consistent theming between KDE and Hyprland
 
 ---
 
