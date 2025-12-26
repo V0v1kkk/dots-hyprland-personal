@@ -14,6 +14,7 @@ This document describes all modifications made in the end-4/dots-hyprland fork o
   - [6. Add nwg-displays and Catppuccin cursor](#6-add-nwg-displays-and-catppuccin-cursor)
   - [7. WezTerm matugen color template](#7-wezterm-matugen-color-template)
   - [8. Custom autostart apps and keybinds](#8-custom-autostart-apps-and-keybinds)
+  - [9. Add documentation for fork customizations](#9-add-documentation-for-fork-customizations)
 - [Integration Guide](#integration-guide)
 - [Rollback Instructions](#rollback-instructions)
 
@@ -428,6 +429,38 @@ Added to `custom/keybinds.conf`:
 - Custom autostart apps launch on Hyprland startup
 - Custom keybinds available but won't conflict with upstream updates
 - Easy to test and modify without affecting main fork configuration
+
+---
+
+### 9. Add documentation for fork customizations
+
+**Commit**: `112983d8` (26 Dec 2025)
+
+**Modified files**:
+- `CUSTOMIZATIONS.md` (NEW)
+
+**Description**:
+
+Created comprehensive English documentation for all fork customizations.
+
+**Contents**:
+- Overview of fork philosophy and key changes
+- Detailed changelog for each of the 8 previous commits
+- Integration guide for upstream synchronization
+- Rollback instructions for reverting changes
+
+**File Location**: `~/.config/end4_dotfiles/CUSTOMIZATIONS.md`
+
+**Rationale**:
+- Maintain clear record of all customizations
+- Enable easy review before pulling upstream updates
+- Provide reference for similar customizations
+- Document workflow for iterative development
+
+**Impact**:
+- Clear separation between upstream and personal customizations
+- Easy onboarding for future self when returning to project
+- Simplified troubleshooting with documented changes
 
 ---
 
