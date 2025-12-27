@@ -46,7 +46,7 @@ quickshell, home_attrs, ... }:
 
       ##### Other MISC #####
       dbus xorg.xlsclients # some basic things
-      foot # Used in Quickshell and Hyprland config; its config is also included
+
       kdePackages.kconfig # provide kwriteconfig6, used in install script
 
 
@@ -93,10 +93,10 @@ quickshell, home_attrs, ... }:
       kdePackages.breeze kdePackages.breeze-icons #breeze
       #breeze-plus (TODO: Not available as nixpkg)
       darkly darkly-qt5 #darkly-bin
-      eza #eza
-      #fish (Currently install via system PM; TODO: should install via nix in future when authentication problem fixed)
+
+      #zsh (configured separately)
       fontconfig #fontconfig
-      kitty #kitty (Used in fuzzel, Hyprland, kdeglobals and Quickshell config; kitty config is also included as dots)
+      wezterm # Terminal (Used in fuzzel, Hyprland, kdeglobals and Quickshell config)
       matugen #matugen-bin (Used in Quickshell)
       #otf-space-grotesk (TODO: Not available as Nixpkg)
       starship #starship

@@ -19,7 +19,7 @@ Note:
 @@ 44,3 44,3 @@
 -  "apps": {
 -    "bluetooth": "kcmshell6 kcm_bluetooth",
--    "network": "kitty -1 fish -c nmtui",
+-    "network": "wezterm -e nmtui",
 +  "apps": {
 +    "bluetooth": "kcmshell6 kcm_bluetooth",
 +    "network": "plasmawindowed org.kde.plasma.networkmanagement",

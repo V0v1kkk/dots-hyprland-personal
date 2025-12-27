@@ -4,21 +4,50 @@ This document describes all modifications made in the end-4/dots-hyprland fork o
 
 ## Table of Contents
 
-- [Overview](#overview)
-- [Changelog](#changelog)
-  - [1. Remove fish, kitty, starship dependencies](#1-remove-fish-kitty-starship-dependencies)
-  - [2. Replace kitty with wezterm in keybinds](#2-replace-kitty-with-wezterm-in-keybinds)
-  - [3. Set wezterm as default terminal in kdeglobals](#3-set-wezterm-as-default-terminal-in-kdeglobals)
-  - [4. Configure hypridle for OLED protection](#4-configure-hypridle-for-oled-protection)
-  - [5. Integrate Catppuccin Macchiato into kdeglobals](#5-integrate-catppuccin-macchiato-into-kdeglobals)
-  - [6. Add nwg-displays and Catppuccin cursor](#6-add-nwg-displays-and-catppuccin-cursor)
-  - [7. WezTerm matugen color template](#7-wezterm-matugen-color-template)
-  - [8. Custom autostart apps and keybinds](#8-custom-autostart-apps-and-keybinds)
-  - [9. Add documentation for fork customizations](#9-add-documentation-for-fork-customizations)
-  - [10. Keyboard layouts and KDE Connect clipboard sync](#10-keyboard-layouts-and-kde-connect-clipboard-sync)
-  - [11. Add Catppuccin themes (GTK and cursors)](#11-add-catppuccin-themes-gtk-and-cursors)
-- [Integration Guide](#integration-guide)
-- [Rollback Instructions](#rollback-instructions)
+- [end-4/dots-hyprland Customizations](#end-4dots-hyprland-customizations)
+  - [Table of Contents](#table-of-contents)
+  - [Overview](#overview)
+    - [Key Changes](#key-changes)
+    - [Fork Philosophy](#fork-philosophy)
+  - [Changelog](#changelog)
+    - [1. Remove fish, kitty, starship dependencies](#1-remove-fish-kitty-starship-dependencies)
+    - [2. Replace kitty with wezterm in keybinds](#2-replace-kitty-with-wezterm-in-keybinds)
+    - [3. Set wezterm as default terminal in kdeglobals](#3-set-wezterm-as-default-terminal-in-kdeglobals)
+    - [4. Configure hypridle for OLED protection](#4-configure-hypridle-for-oled-protection)
+      - [Idle timers:](#idle-timers)
+      - [Removed:](#removed)
+      - [TODO:](#todo)
+    - [5. Integrate Catppuccin Macchiato into kdeglobals](#5-integrate-catppuccin-macchiato-into-kdeglobals)
+      - [Color scheme](#color-scheme)
+      - [Preserved user settings](#preserved-user-settings)
+      - [Original values documentation](#original-values-documentation)
+    - [6. Add nwg-displays and Catppuccin cursor](#6-add-nwg-displays-and-catppuccin-cursor)
+      - [1. Added nwg-displays package](#1-added-nwg-displays-package)
+      - [2. Catppuccin cursor](#2-catppuccin-cursor)
+      - [3. Terminal in fuzzel](#3-terminal-in-fuzzel)
+    - [7. WezTerm matugen color template](#7-wezterm-matugen-color-template)
+      - [Created new template](#created-new-template)
+      - [Updated config.toml](#updated-configtoml)
+      - [What matugen does](#what-matugen-does)
+      - [WezTerm integration](#wezterm-integration)
+    - [8. Custom autostart apps and keybinds](#8-custom-autostart-apps-and-keybinds)
+      - [Autostart Applications](#autostart-applications)
+      - [Custom Keybinds](#custom-keybinds)
+    - [9. Add documentation for fork customizations](#9-add-documentation-for-fork-customizations)
+    - [10. Keyboard layouts and KDE Connect clipboard sync](#10-keyboard-layouts-and-kde-connect-clipboard-sync)
+      - [Keyboard Layouts Configuration](#keyboard-layouts-configuration)
+      - [KDE Connect Clipboard Sync (Hyprland only)](#kde-connect-clipboard-sync-hyprland-only)
+    - [11. Add Catppuccin themes (GTK and cursors)](#11-add-catppuccin-themes-gtk-and-cursors)
+    - [12. Remove unused configs (kitty, foot, fish)](#12-remove-unused-configs-kitty-foot-fish)
+  - [Integration Guide](#integration-guide)
+    - [Syncing with upstream](#syncing-with-upstream)
+    - [Merge conflicts](#merge-conflicts)
+    - [Post-merge verification](#post-merge-verification)
+  - [Rollback Instructions](#rollback-instructions)
+    - [Revert single change](#revert-single-change)
+    - [Full rollback to upstream](#full-rollback-to-upstream)
+    - [Partial rollback (kdeglobals → MaterialYouDark)](#partial-rollback-kdeglobals--materialyoudark)
+  - [Contact and Support](#contact-and-support)
 
 ---
 
@@ -595,6 +624,65 @@ cp -r dots/.icons/* ~/.icons/
 - Cursor theme available without manual download
 - Icon theme needs one-time manual installation
 - Consistent theming between KDE and Hyprland
+
+---
+
+### 12. Remove unused configs (kitty, foot, fish)
+
+**Date**: 27 Dec 2025
+
+**Removed files**:
+- `dots/.config/kitty/` (entire directory with all configs)
+- `dots/.config/foot/` (entire directory with foot.ini)
+- `dots/.config/fish/` (entire directory with fish configs)
+
+**Modified files**:
+- `dots/.config/hypr/custom/keybinds.conf` - removed foot from terminal fallbacks
+- `dots/.config/quickshell/ii/services/LauncherSearch.qml` - replaced fish with bash
+- `sdata/subcmd-install/3.files-exp.yaml` - removed kitty/foot/fish installation sections
+- `sdata/subcmd-install/3.files-exp.sh` - set wezterm/zsh as defaults
+- `sdata/dist-nix/home-manager/home.nix` - removed foot, replaced fish with zsh
+- `sdata/dist-nix/install-deps.sh` - replaced fish with zsh in test commands
+- `sdata/dist-fedora/README.md` - replaced fish commands with wezterm
+- `sdata/dist-gentoo/useflags` - removed fish, kitty, and eza useflags
+- `sdata/dist-gentoo/illogical-impulse-fonts-themes/*.ebuild` - removed fish, kitty, and eza dependencies
+- `sdata/dist-gentoo/README.md` - changed code blocks from fish to bash
+- `sdata/dist-fedora/feddeps.toml` - removed eza
+- `sdata/dist-nix/home-manager/home.nix` - removed foot, eza, replaced fish with zsh
+
+**Description**:
+
+Cleaned up fork by removing all configurations and references for unused programs: kitty, foot, and fish. Since the fork exclusively uses wezterm (terminal) and zsh (shell), keeping unused configs only adds clutter and potential confusion.
+
+**What was cleaned**:
+- ❌ **kitty**: All configs removed (replaced with wezterm everywhere)
+- ❌ **foot**: All configs removed (not used, wezterm preferred)
+- ❌ **fish**: All configs removed (using zsh with oh-my-posh)
+- ❌ **eza**: Removed from dependencies (using lsd instead)
+
+**Updated defaults**:
+- Terminal selection: wezterm (was: kitty)
+- Shell selection: zsh (was: fish)
+- Fallback commands: removed kitty/foot/fish from all scripts
+
+**What remains**:
+- ✅ wezterm configs (already in fork)
+- ✅ zsh configs via `dots/.config/zshrc.d/`
+- ✅ Installation scripts only offer wezterm/zsh
+
+**Rationale**:
+- Don't want to copy unused configs during installation
+- Avoid confusion about which terminal/shell is actually used
+- Keep fork clean and focused on actual setup
+- Reduce repository size by ~150KB
+- Simplify installation scripts (no need to choose what's already decided)
+- Already using lsd instead of eza for `ls` replacement
+
+**Impact**:
+- Installation process no longer offers kitty/foot/fish
+- No unused config files copied to `~/.config/`
+- Clear which terminal (wezterm) and shell (zsh) are used
+- Easier to maintain fork without dead code
 
 ---
 

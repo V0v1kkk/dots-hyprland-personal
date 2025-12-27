@@ -16,10 +16,10 @@ RDEPEND="
 	kde-plasma/breeze
 	kde-plasma/breeze-plus
 	x11-themes/darkly
-	sys-apps/eza
-	app-shells/fish
+
+
 	media-libs/fontconfig
-	x11-terms/kitty
+
 	x11-misc/matugen
 	media-fonts/space-grotesk
 	app-shells/starship

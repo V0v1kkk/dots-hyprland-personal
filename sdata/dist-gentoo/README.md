@@ -29,7 +29,7 @@ Note:
 - pipewire, pipewire-pulse, and wireplumber must be started after a dbus-session is created and before Hyprland is launched.
 
 If you want to start after logging into tty1 you can do something like this.
-```fish
+```bash
 if status --is-interactive; and [ (tty) = "/dev/tty1" ]
     # Start DBus session if not running
     if not set -q DBUS_SESSION_BUS_ADDRESS

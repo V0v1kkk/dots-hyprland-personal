@@ -9,7 +9,6 @@ depends=(
   breeze
   breeze-plus
   darkly-bin
-  eza
   fontconfig
   matugen-bin
   otf-space-grotesk

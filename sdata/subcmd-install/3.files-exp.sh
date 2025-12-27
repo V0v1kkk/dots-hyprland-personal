@@ -28,8 +28,8 @@ wizard_update_preferences() {
   echo -e "${STY_CYAN}=== Dotfiles Customization ===${STY_RESET}"
 
     # Get current preferences
-    current_shell=$(yq '.user_preferences.shell // "fish"' "$CONFIG_FILE")
-    current_terminal=$(yq '.user_preferences.terminal // "kitty"' "$CONFIG_FILE")
+    current_shell=$(yq '.user_preferences.shell // "zsh"' "$CONFIG_FILE")
+    current_terminal=$(yq '.user_preferences.terminal // "wezterm"' "$CONFIG_FILE")
     current_keybindings=$(yq '.user_preferences.keybindings // "default"' "$CONFIG_FILE")
 
     echo "Current preferences:"
@@ -40,27 +40,25 @@ wizard_update_preferences() {
 
     # Shell selection
     echo "Which shell do you prefer?"
-    echo "1) fish (default)"
-    echo "2) zsh"
-    read -p "Enter choice [1-2]: " shell_choice
+    echo "1) zsh (default)"
+    echo ""
+    read -p "Use zsh? [Y/n]: " shell_choice
 
     case "$shell_choice" in
-      1|"") shell="fish" ;;
-      2) shell="zsh" ;;
-      *) echo "Invalid choice, using fish"; shell="fish" ;;
+      n|N) shell="bash" ;;
+      *) shell="zsh" ;;
     esac
 
     # Terminal selection
     echo
     echo "Which terminal do you prefer?"
-    echo "1) kitty (default)"
-    echo "2) foot"
-    read -p "Enter choice [1-2]: " terminal_choice
+    echo "1) wezterm (default)"
+    echo ""
+    read -p "Use wezterm? [Y/n]: " terminal_choice
 
     case "$terminal_choice" in
-      1|"") terminal="kitty" ;;
-      2) terminal="foot" ;;
-      *) echo "Invalid choice, using kitty"; terminal="kitty" ;;
+      n|N) terminal="alacritty" ;;
+      *) terminal="wezterm" ;;
     esac
 
     # Keybindings selection

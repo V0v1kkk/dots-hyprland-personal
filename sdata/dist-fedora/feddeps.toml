@@ -4,8 +4,7 @@ repos = [
   "ririko66z/dots-hyprland",
   "solopasha/hyprland",
   "deltacopy/darkly",
-  "alternateved/eza",
-  "atim/starship"
+
 ]
 
 # Fedora dependencies list
@@ -63,13 +62,9 @@ packages = [
   "sddm-breeze",
   "breeze-plus-icon-theme",
   "darkly",
-  "eza",
-  "fish",
   "fontconfig",
-  "kitty",
   "matugen",
   "florian-karsten-space-grotesk-fonts",
-  "starship",
   "jetbrains-mono-nerd-fonts",
   "google-material-symbols-vf-rounded-fonts",
   "material-icons-fonts",

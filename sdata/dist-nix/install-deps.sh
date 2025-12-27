@@ -66,7 +66,7 @@ function hm_deps(){
 
 vianix-warning
 
-TEST_CMDS=(curl fish swaylock gnome-keyring)
+TEST_CMDS=(curl zsh swaylock gnome-keyring)
 ensure_cmds "${TEST_CMDS[@]}"
 
 if ! command -v nix >/dev/null 2>&1;then
