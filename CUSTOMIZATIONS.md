@@ -686,6 +686,99 @@ Cleaned up fork by removing all configurations and references for unused program
 
 ---
 
+### 13. NVIDIA RTX 3090 Wayland configuration
+
+**Date**: 28 Dec 2025
+
+**Modified files**:
+- `dots/.config/hypr/custom/env.conf` - added NVIDIA environment variables
+
+**Description**:
+
+Added essential NVIDIA-specific environment variables for RTX 3090 on Wayland/Hyprland.
+
+**Changes**:
+
+```bash
+# NVIDIA (RTX 3090)
+env = LIBVA_DRIVER_NAME, nvidia
+env = __GLX_VENDOR_LIBRARY_NAME, nvidia
+env = GBM_BACKEND, nvidia-drm
+env = WLR_NO_HARDWARE_CURSORS, 1
+env = ELECTRON_OZONE_PLATFORM_HINT, auto
+```
+
+**Why needed**:
+- Fixed QuickShell crashes: "Failed to create QSG texture from WlDmaBuffer: No GL context"
+- `GBM_BACKEND=nvidia-drm` - critical for proper GL context creation
+- `WLR_NO_HARDWARE_CURSORS=1` - fixes cursor issues on NVIDIA
+- `ELECTRON_OZONE_PLATFORM_HINT=auto` - enables Wayland for Electron apps
+
+**System info**:
+- GPU: NVIDIA RTX 3090
+- Driver: 590.48.01 (supports explicit sync)
+- Xwayland: 24.1.9
+- Kernel param: `nvidia-drm.modeset=1` (already enabled)
+
+**Additional recommendations** (documented in `NVIDIA_SETUP.md`):
+- Install `libva-nvidia-driver` for hardware video acceleration
+- Add `nvidia.NVreg_PreserveVideoMemoryAllocations=1` for suspend/resume stability
+
+**Resources**:
+- [Hyprland NVIDIA Wiki](https://wiki.hyprland.org/Nvidia/)
+- Perplexity search results (28 Dec 2025)
+
+**Impact**:
+- QuickShell now launches without crashes
+- Proper GPU acceleration for Wayland compositing
+- Native Wayland support for Electron apps
+
+---
+
+### 14. Restore Catppuccin-Macchiato icons
+
+**Date**: 28 Dec 2025
+
+**Modified files**:
+- `dots/.config/kde-material-you-colors/config.conf` - icon theme configuration
+
+**Description**:
+
+Fixed icon theme that was overwritten during Hyprland installation.
+
+**Changes**:
+
+```ini
+# Light scheme icons theme
+#iconslight = breeze-plus (default)
+iconslight = Catppuccin-Macchiato
+
+# Dark scheme icons theme  
+#iconsdark = breeze-plus-dark (default)
+iconsdark = Catppuccin-Macchiato
+```
+
+**Why needed**:
+- Hyprland installer overwrote custom icons with `breeze-plus-dark`
+- User preference: Catppuccin-Macchiato icons (installed in `~/.local/share/icons/`)
+
+**Files restored**:
+- `~/.config/kdeglobals` - KDE apps
+- `~/.config/gtk-4.0/settings.ini` - GTK4 apps
+- `~/.config/gtkrc` - GTK2 apps
+- `gsettings` - GNOME/GTK apps
+
+**Original values preserved**:
+- `breeze-plus` (light) - commented
+- `breeze-plus-dark` (dark) - commented
+
+**Impact**:
+- Consistent Catppuccin icon theme across all apps
+- Future installations will preserve custom icons
+- Easy rollback via commented defaults
+
+---
+
 ## Integration Guide
 
 ### Syncing with upstream
@@ -770,5 +863,5 @@ nano dots/.config/kdeglobals
 ---
 
 _Document created: 2025-12-25_  
-_Last updated: 2025-12-26_  
-_Version: 1.0_
+_Last updated: 2025-12-28_  
+_Version: 1.2_
