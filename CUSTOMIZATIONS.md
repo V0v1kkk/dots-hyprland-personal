@@ -39,6 +39,9 @@ This document describes all modifications made in the end-4/dots-hyprland fork o
       - [KDE Connect Clipboard Sync (Hyprland only)](#kde-connect-clipboard-sync-hyprland-only)
     - [11. Add Catppuccin themes (GTK and cursors)](#11-add-catppuccin-themes-gtk-and-cursors)
     - [12. Remove unused configs (kitty, foot, fish)](#12-remove-unused-configs-kitty-foot-fish)
+    - [13. NVIDIA RTX 3090 Wayland configuration](#13-nvidia-rtx-3090-wayland-configuration)
+    - [14. Restore Catppuccin-Macchiato icons](#14-restore-catppuccin-macchiato-icons)
+    - [15. OLED screensaver via hyprlock-blank](#15-oled-screensaver-via-hyprlock-blank)
   - [Integration Guide](#integration-guide)
     - [Syncing with upstream](#syncing-with-upstream)
     - [Merge conflicts](#merge-conflicts)
@@ -776,6 +779,72 @@ iconsdark = Catppuccin-Macchiato
 - Consistent Catppuccin icon theme across all apps
 - Future installations will preserve custom icons
 - Easy rollback via commented defaults
+
+---
+
+### 15. OLED screensaver via hyprlock-blank
+
+**Date**: 29 Dec 2025
+
+**Created files**:
+- `dots/.config/hypr/hyprlock-blank.conf` - black screensaver config
+
+**Modified files**:
+- `dots/.config/hypr/hypridle.conf` - updated to use hyprlock-blank with grace period
+
+**Description**:
+
+Replaced DPMS off with hyprlock-based black screensaver for OLED protection. DPMS was triggering LG TV built-in screensaver which defeats the purpose of black screen protection.
+
+**New config: hyprlock-blank.conf**:
+```conf
+general {
+    hide_cursor = true
+    grace = 0
+    disable_loading_bar = true
+}
+
+background {
+    color = rgb(0, 0, 0)
+}
+```
+
+**hypridle.conf changes**:
+```conf
+# 10 min - Black screensaver via hyprlock-blank (полная защита OLED без DPMS)
+# Grace period 315360000 сек (~10 лет) = фактически без пароля
+# Черный экран #000000 = OLED пиксели полностью выключены
+listener {
+    timeout = 600
+    on-timeout = pidof hyprlock || hyprlock --grace 315360000 -c ~/.config/hypr/hyprlock-blank.conf
+    on-resume = killall hyprlock
+}
+```
+
+**How it works**:
+1. After 15 minutes idle → hyprlock launches with black screen config
+2. Grace period 315360000 seconds (~10 years) = effectively no password required
+3. Pure black (#000000) = OLED pixels completely off = burn-in protection
+4. Exit by moving mouse or pressing any key (no password prompt)
+
+**Advantages over DPMS**:
+- ✅ Shows true black screen on both monitors
+- ✅ Doesn't trigger LG TV built-in screensaver
+- ✅ No password prompt (grace period trick)
+- ✅ Instant wake on input
+- ✅ OLED pixels completely off (#000000)
+
+**Rationale**:
+- DPMS off triggered unwanted LG TV screensaver
+- hyprlock always requires password (but grace period bypasses this)
+- Pure black is ideal for OLED burn-in protection
+- Simpler than creating custom overlay scripts
+
+**Impact**:
+- OLED ноутбук защищен от burn-in (черные пиксели выключены)
+- LG TV не показывает встроенную заставку
+- Нет необходимости вводить пароль при возврате
+- Работает на всех мониторах одновременно
 
 ---
 
