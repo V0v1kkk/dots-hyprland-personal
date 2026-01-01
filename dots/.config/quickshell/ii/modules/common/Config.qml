@@ -455,7 +455,7 @@ Singleton {
                 property bool showItemId: false
                 property bool invertPinnedItems: true // Makes the below a whitelist for the tray and blacklist for the pinned area
                 property list<var> pinnedItems: [ "Fcitx" ]
-                property bool filterPassive: true
+                property bool filterPassive: false
             }
 
             property JsonObject musicRecognition: JsonObject {
