@@ -114,12 +114,16 @@ WMouseAreaButton {
             }
         }
 
-        ScreencopyView {
+        Rectangle {
+            id: windowRect
             Layout.fillHeight: true
             Layout.alignment: Qt.AlignHCenter
             implicitWidth: Math.round(root.size.width)
             implicitHeight: Math.round(root.size.height)
-            constraintSize: Qt.size(Math.round(root.size.width), Math.round(root.size.height))
+            color: Looks.colors.bg2Base
+            border.color: Looks.colors.bg2Border
+            border.width: 1
+            radius: Looks.radius.medium
 
             Behavior on implicitWidth {
                 animation: Looks.transition.enter.createObject(this)
@@ -127,9 +131,13 @@ WMouseAreaButton {
             Behavior on implicitHeight {
                 animation: Looks.transition.enter.createObject(this)
             }
-
-            captureSource: root.toplevel ?? null
-            live: true
+            
+            WAppIcon {
+                anchors.centerIn: parent
+                iconName: root.iconName
+                implicitSize: Math.min(parent.width, parent.height) * 0.4
+                tryCustomIcon: false
+            }
         }
     }
 

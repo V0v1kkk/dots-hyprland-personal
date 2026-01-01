@@ -165,8 +165,8 @@ Item {
                                 windowButton.modelData?.activate();
                             }
                             contentItem: ColumnLayout {
-                                implicitWidth: screencopyView.implicitWidth
-                                implicitHeight: screencopyView.implicitHeight
+                                implicitWidth: previewRect.implicitWidth
+                                implicitHeight: previewRect.implicitHeight
 
                                 ButtonGroup {
                                     contentWidth: parent.width - anchors.margins * 2
@@ -201,20 +201,27 @@ Item {
                                         }
                                     }
                                 }
-                                ScreencopyView {
-                                    id: screencopyView
-                                    captureSource: previewPopup ? windowButton.modelData : null
-                                    live: true
-                                    paintCursor: true
-                                    constraintSize: Qt.size(root.maxWindowPreviewWidth, root.maxWindowPreviewHeight)
-                                    onHasContentChanged: {
-                                        previewPopup.updatePreviewReadiness();
+                                Rectangle {
+                                    id: previewRect
+                                    implicitWidth: root.maxWindowPreviewWidth
+                                    implicitHeight: root.maxWindowPreviewHeight
+                                    color: Appearance.colors.colLayer1Base
+                                    border.color: Appearance.colors.colLayer2Border
+                                    border.width: 1
+                                    radius: Appearance.sizes.borderRadius
+                                    
+                                    IconImage {
+                                        anchors.centerIn: parent
+                                        source: Quickshell.iconPath(AppSearch.guessIcon(windowButton.modelData?.appId ?? ""), "image-missing")
+                                        width: Math.min(parent.width, parent.height) * 0.4
+                                        height: Math.min(parent.width, parent.height) * 0.4
                                     }
+                                    
                                     layer.enabled: true
                                     layer.effect: OpacityMask {
                                         maskSource: Rectangle {
-                                            width: screencopyView.width
-                                            height: screencopyView.height
+                                            width: previewRect.width
+                                            height: previewRect.height
                                             radius: Appearance.rounding.small
                                         }
                                     }

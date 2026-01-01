@@ -93,15 +93,27 @@ WMouseAreaButton {
                         model: ScriptModel {
                             values: HyprlandData.toplevelsForWorkspace(root.workspace)
                         }
-                        delegate: ScreencopyView {
+                        delegate: Rectangle {
                             required property var modelData
                             readonly property var hyprlandWindowData: HyprlandData.windowByAddress[`0x${modelData.HyprlandToplevel?.address}`]
-                            captureSource: modelData
-                            live: true
+                            readonly property string iconName: AppSearch.guessIcon(hyprlandWindowData?.class)
+                            
                             width: hyprlandWindowData?.size[0] * root.windowScale
                             height: hyprlandWindowData?.size[1] * root.windowScale
                             x: hyprlandWindowData?.at[0] * root.windowScale
                             y: hyprlandWindowData?.at[1] * root.windowScale
+                            
+                            color: Looks.colors.bg2Base
+                            border.color: Looks.colors.bg2Border
+                            border.width: 1
+                            radius: 2
+                            
+                            WAppIcon {
+                                anchors.centerIn: parent
+                                iconName: parent.iconName
+                                implicitSize: Math.min(parent.width, parent.height) * 0.5
+                                tryCustomIcon: false
+                            }
                         }
                     }
                 }

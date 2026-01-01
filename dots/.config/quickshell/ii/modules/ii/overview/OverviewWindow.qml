@@ -89,12 +89,17 @@ Item { // Window
         animation: Appearance.animation.elementMoveEnter.numberAnimation.createObject(this)
     }
 
-    ScreencopyView {
-        id: windowPreview
+    Rectangle {
+        id: windowRect
         anchors.fill: parent
-        captureSource: GlobalStates.overviewOpen ? root.toplevel : null
-        live: true
-
+        color: Appearance.colors.colLayer2Base
+        border.color: Appearance.m3colors.m3outline
+        border.width: 1
+        topLeftRadius: root.topLeftRadius
+        topRightRadius: root.topRightRadius
+        bottomRightRadius: root.bottomRightRadius
+        bottomLeftRadius: root.bottomLeftRadius
+        
         // Color overlay for interactions
         Rectangle {
             anchors.fill: parent
@@ -104,9 +109,7 @@ Item { // Window
             bottomLeftRadius: root.bottomLeftRadius
             color: pressed ? ColorUtils.transparentize(Appearance.colors.colLayer2Active, 0.5) : 
                 hovered ? ColorUtils.transparentize(Appearance.colors.colLayer2Hover, 0.7) : 
-                ColorUtils.transparentize(Appearance.colors.colLayer2)
-            border.color : ColorUtils.transparentize(Appearance.m3colors.m3outline, 0.88)
-            border.width : 1
+                "transparent"
         }
 
         Image {

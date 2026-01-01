@@ -77,16 +77,25 @@ Button {
             Layout.fillHeight: true
             Layout.margins: Looks.radius.large - root.padding
             Layout.topMargin: 0
-            implicitWidth: Math.max(screencopyView.implicitWidth, 80)
-            implicitHeight: screencopyView.implicitHeight
+            implicitWidth: Math.max(160, 80)
+            implicitHeight: 90
 
-            ScreencopyView {
-                id: screencopyView
+            Rectangle {
+                id: previewRect
                 anchors.centerIn: parent
-                captureSource: root.toplevel
-                live: true
-                paintCursor: true
-                constraintSize: Qt.size(root.previewWidthConstraint, root.previewHeightConstraint)
+                width: parent.width
+                height: parent.height
+                color: Looks.colors.bg2Base
+                border.color: Looks.colors.bg2Border
+                border.width: 1
+                radius: Looks.radius.medium
+                
+                WAppIcon {
+                    anchors.centerIn: parent
+                    iconName: AppSearch.guessIcon(root.toplevel.appId)
+                    implicitSize: Math.min(parent.width, parent.height) * 0.4
+                    tryCustomIcon: false
+                }
             }
         }
     }
