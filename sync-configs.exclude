@@ -1,0 +1,17 @@
+# Sync exclusions - files that should NOT be synced between local and fork
+# These are auto-generated files or temporary/cache files
+
+# matugen auto-generated files (Material You colors from wallpaper)
+hypr/hyprland/colors.conf
+hypr/hyprlock/colors.conf
+fuzzel/fuzzel_theme.ini
+
+# GTK auto-generated Material You CSS
+gtk-3.0/gtk.css
+gtk-4.0/gtk.css
+
+# QuickShell generated colors
+# Note: these are in ~/.local/state, not ~/.config, so not synced anyway
+
+# WezTerm auto-generated colors
+wezterm/colors.toml
