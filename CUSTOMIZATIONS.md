@@ -42,6 +42,9 @@ This document describes all modifications made in the end-4/dots-hyprland fork o
     - [13. NVIDIA RTX 3090 Wayland configuration](#13-nvidia-rtx-3090-wayland-configuration)
     - [14. Restore Catppuccin-Macchiato icons](#14-restore-catppuccin-macchiato-icons)
     - [15. OLED screensaver via hyprlock-blank](#15-oled-screensaver-via-hyprlock-blank)
+    - [16. Configuration management system](#16-configuration-management-system)
+    - [17. QuickShell performance optimizations](#17-quickshell-performance-optimizations)
+    - [18. XWayland scaling fix](#18-xwayland-scaling-fix)
   - [Integration Guide](#integration-guide)
     - [Syncing with upstream](#syncing-with-upstream)
     - [Merge conflicts](#merge-conflicts)
@@ -848,6 +851,219 @@ listener {
 
 ---
 
+### 16. Configuration management system
+
+**Date**: 1 Jan 2026
+
+**Created files**:
+- `sync-configs.conf` - centralized list of configs to sync
+- `sync-configs.exclude` - auto-generated files excluded from sync
+- `sync-to-fork.sh` - copy FROM local TO fork with exclusions
+- `sync-to-local.sh` - copy FROM fork TO local with exclusions
+- `diff-configs.sh` - compare local vs fork, show differences
+
+**Description**:
+
+Created a comprehensive configuration management system for syncing custom configs between working directory (`~/.config`) and fork (`~/.config/end4_dotfiles/dots/.config`).
+
+**Key Features**:
+
+1. **Centralized config list** (`sync-configs.conf`):
+   - Single file listing all synced configs: hypr, quickshell, fuzzel, wlogout
+   - Comments supported with `#`
+   - Easy to add/remove configs
+
+2. **Exclusion support** (`sync-configs.exclude`):
+   - Auto-generated files: matugen colors, GTK CSS, WezTerm colors
+   - Prevents syncing temporary/cache files
+   - Pattern-based: `hypr/hyprland/colors.conf`, `fuzzel/fuzzel_theme.ini`, etc.
+
+3. **Smart sync scripts**:
+   - Use `rsync` with `--exclude` flags for precise control
+   - Automatic backups before overwriting
+   - Fallback to hardcoded list if config file missing
+
+4. **Visual diff tool** (`diff-configs.sh`):
+   - Color-coded output: ✓ identical, ≠ differences, ⚠ missing
+   - File-level summary showing which files differ
+   - Respects exclusion list (doesn't show auto-generated files as different)
+
+**Workflow**:
+```bash
+# 1. Edit files in ~/.config (working directory)
+vim ~/.config/hypr/custom/env.conf
+
+# 2. Compare with fork to see changes
+cd ~/.config/end4_dotfiles
+./diff-configs.sh
+
+# 3. Sync to fork
+./sync-to-fork.sh
+
+# 4. Commit changes
+git add dots/.config
+git commit -m "Update configs"
+```
+
+**Rationale**:
+- Simplifies maintaining fork customizations
+- Clear visibility into what changed (diff before sync)
+- Prevents accidentally syncing generated files
+- Easy to extend with new configs
+
+**Impact**:
+- Streamlined workflow for config management
+- No manual copying between directories
+- Automatic exclusion of matugen/GTK generated files
+- Easy to review changes before committing
+
+---
+
+### 17. QuickShell performance optimizations
+
+**Date**: 1 Jan 2026
+
+**Modified files**:
+- `dots/.config/quickshell/ii/modules/ii/dock/DockApps.qml`
+- `dots/.config/quickshell/ii/modules/ii/overview/OverviewWindow.qml`
+- `dots/.config/quickshell/ii/modules/waffle/bar/tasks/WindowPreview.qml`
+- `dots/.config/quickshell/ii/modules/waffle/taskView/TaskViewWindow.qml`
+- `dots/.config/quickshell/ii/modules/waffle/taskView/TaskViewWorkspace.qml`
+- `dots/.config/hypr/custom/env.conf`
+- `dots/.config/quickshell/ii/modules/common/Config.qml`
+
+**Description**:
+
+Major performance optimization for QuickShell on NVIDIA RTX 3090, fixing lag and freezing issues.
+
+**Changes**:
+
+1. **Removed all ScreencopyView components** (5 QML files):
+   - **TaskViewWindow.qml**: window preview cards → Rectangle + WAppIcon (40% size)
+   - **TaskViewWorkspace.qml**: workspace miniatures → Rectangle + WAppIcon (50% size)
+   - **WindowPreview.qml**: taskbar hover previews → Rectangle + WAppIcon (40% size)
+   - **DockApps.qml**: dock window previews → Rectangle + IconImage
+   - **OverviewWindow.qml**: overview cards → Rectangle + existing Image icon
+
+2. **Disabled QS_DISABLE_DMABUF** environment variable:
+   ```bash
+   # DISABLED 2026-01-01: We removed all ScreencopyView, DMA-BUF should work now and be FASTER
+   # env = QS_DISABLE_DMABUF, 1
+   ```
+   - ScreencopyView was causing crashes, hence `QS_DISABLE_DMABUF=1` workaround
+   - Now ScreencopyView removed → no crash risk → can use fast DMA-BUF
+   - DMA-BUF = GPU zero-copy buffers (fast) vs SHM = CPU memory buffers (slow)
+
+3. **System tray configuration**:
+   - Set `filterPassive: false` in Config.qml
+   - Shows all tray icons including passive items (background apps)
+
+**Why needed**:
+- User reported: "все немножко подтормаживает... иногда прям надолго подвисает"
+- Root cause: `QS_DISABLE_DMABUF=1` forced slow CPU memory copies
+- ScreencopyView live previews caused both crashes AND performance issues
+- NVIDIA RTX 3090 with driver 590.48.01 (explicit sync support)
+
+**Performance impact**:
+- ✅ Eliminates lag and freezing in QuickShell
+- ✅ DMA-BUF GPU acceleration enabled
+- ✅ No live video capture overhead
+- ✅ Static icons instead of live window previews
+
+**Rationale**:
+- Live window previews not essential for workflow
+- Static icons provide enough visual context
+- Massive performance gain outweighs minor UX change
+- NVIDIA DMA-BUF works reliably without ScreencopyView
+
+**Impact**:
+- QuickShell responsive and smooth on RTX 3090
+- Task switcher, dock, overview all use static icons
+- No more lag when switching workspaces or hovering over taskbar
+- GPU acceleration properly utilized
+
+---
+
+### 18. XWayland scaling fix
+
+**Date**: 1 Jan 2026
+
+**Modified files**:
+- `dots/.config/hypr/custom/env.conf`
+- `dots/.config/hypr/custom/execs.conf`
+- `dots/.config/hypr/custom/general.conf`
+- `dots/.config/hypr/custom/rules.conf`
+- `dots/.config/hypr/hyprland/general.conf`
+- `dots/.config/hypr/hyprland/execs.conf`
+- `dots/.config/hypr/monitors.conf`
+- `dots/.config/hypr/custom/keybinds.conf`
+
+**Description**:
+
+Comprehensive fix for blurry/grainy fonts in XWayland apps (Telegram, etc.) with fractional scaling.
+
+**Changes**:
+
+1. **XWayland force zero scaling** (`custom/general.conf`):
+   ```conf
+   xwayland {
+       force_zero_scaling = true
+   }
+   ```
+   - XWayland renders at scale 1.0, Hyprland scales output cleanly
+
+2. **Environment variables** (`custom/env.conf`):
+   ```bash
+   env = XCURSOR_SIZE, 24
+   env = GDK_SCALE, 2
+   env = GDK_DPI_SCALE, 0.75
+   ```
+   - Proper DPI for X11 apps with 1.5x scaling (2 × 0.75 = 1.5)
+
+3. **X resources loading** (`custom/execs.conf`):
+   ```bash
+   exec-once = xrdb -merge ~/.Xresources
+   ```
+   - Loads X11 DPI, font rendering, cursor size settings
+
+4. **Telegram window rules** (`custom/rules.conf`):
+   ```conf
+   windowrulev2 = forcergbx, class:^(TelegramDesktop)$
+   windowrulev2 = immediate, class:^(TelegramDesktop)$
+   ```
+   - Better font rendering for XWayland Telegram
+
+5. **Disable VFR/VRR** (`hyprland/general.conf`):
+   ```conf
+   vfr = 0
+   vrr = 0
+   ```
+   - Prevents monitor flickering/ripple on RTX 3090 + OLED + LG TV
+
+6. **Misc improvements**:
+   - Explicit `kwalletd6` launch (fixes auto-start issue)
+   - Increased autostart delays: WhisperVoiceInput, Toolbox, Remmina (10s)
+   - Update monitors.conf: nwg-displays generated (scale 1.5, bitdepth 10)
+   - Alt+Tab experiment comment in keybinds
+
+**Why needed**:
+- Fractional scaling (1.5x) causes blurry fonts in XWayland apps
+- Default XWayland scaling doesn't match Wayland-native rendering quality
+- Monitor flickering with VRR/VFR enabled
+
+**Impact**:
+- ✅ Sharp, clear fonts in Telegram and other XWayland apps
+- ✅ Proper cursor size and DPI
+- ✅ No monitor flickering
+- ✅ Consistent scaling across Wayland and XWayland apps
+
+**Rationale**:
+- `force_zero_scaling` is recommended approach for fractional scaling
+- GDK environment variables provide proper DPI hint
+- X resources ensure consistent rendering for legacy X11 apps
+
+---
+
 ## Integration Guide
 
 ### Syncing with upstream
@@ -932,5 +1148,5 @@ nano dots/.config/kdeglobals
 ---
 
 _Document created: 2025-12-25_  
-_Last updated: 2025-12-28_  
-_Version: 1.2_
+_Last updated: 2026-01-01_  
+_Version: 1.4_
