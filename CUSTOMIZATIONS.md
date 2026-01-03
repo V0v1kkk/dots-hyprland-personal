@@ -919,6 +919,65 @@ git commit -m "Update configs"
 
 ---
 
+### 19. Rollback KWallet experiments, restore gnome-keyring
+
+**Date**: 3 Jan 2026
+
+**Modified files**:
+- `dots/.config/hypr/hyprland/execs.conf` - restored gnome-keyring-daemon
+
+**Description**:
+
+Reverted experimental KWallet integration and restored original gnome-keyring setup.
+
+**Changes**:
+
+1. **Restored gnome-keyring-daemon** in `hyprland/execs.conf`:
+   ```bash
+   # Before (KWallet experiment):
+   exec-once = /usr/bin/kwalletd6
+   
+   # After (restored original):
+   exec-once = gnome-keyring-daemon --start --components=secrets
+   ```
+
+2. **Deleted experimental scripts**:
+   - Removed `~/.config/quickshell/ii/scripts/keyring/get_keyring.sh` (KWallet wrapper)
+   - Removed `~/.config/quickshell/ii/scripts/keyring/store_keyring.sh` (KWallet wrapper)
+   - Cleaned up backup directory with empty KWallet test files
+
+**Why needed**:
+- KWallet integration proved impractical (40+ hours work, GUI prompts, complexity)
+- gnome-keyring already installed and working (`libsecret 0.21.7-1`, `gnome-keyring 1:48.0-1`)
+- NetworkManager already uses libsecret by default
+- QuickShell KeyringStorage.qml designed for secret-tool (libsecret)
+- Original end-4 setup uses gnome-keyring, not KWallet
+
+**What works**:
+- ✅ gnome-keyring launches automatically on Hyprland startup
+- ✅ KeyringStorage.qml uses secret-tool (libsecret) for API keys
+- ✅ NetworkManager stores WiFi passwords in gnome-keyring
+- ✅ No code changes needed - everything works out of the box
+
+**Migration plan**:
+- WiFi passwords: reconnect to networks in Hyprland (NetworkManager auto-saves to gnome-keyring)
+- Samba shares: re-open in Dolphin (will prompt and save credentials)
+- One-time manual migration from KWallet to gnome-keyring
+
+**Rationale**:
+- Don't fight upstream design - end-4 chose gnome-keyring for good reasons
+- Cross-DE compatibility: gnome-keyring works on KDE, GNOME, Hyprland
+- Less maintenance: no custom wrappers, no KWallet GUI prompts
+- Faster migration: 2-3 hours one-time password migration vs 40+ hours KWallet integration
+
+**Impact**:
+- Clean codebase without experimental KWallet code
+- Reliable keyring access via standard libsecret API
+- Easy password migration path documented
+- No surprises during Hyprland setup
+
+---
+
 ### 17. QuickShell performance optimizations
 
 **Date**: 1 Jan 2026
@@ -1041,7 +1100,6 @@ Comprehensive fix for blurry/grainy fonts in XWayland apps (Telegram, etc.) with
    - Prevents monitor flickering/ripple on RTX 3090 + OLED + LG TV
 
 6. **Misc improvements**:
-   - Explicit `kwalletd6` launch (fixes auto-start issue)
    - Increased autostart delays: WhisperVoiceInput, Toolbox, Remmina (10s)
    - Update monitors.conf: nwg-displays generated (scale 1.5, bitdepth 10)
    - Alt+Tab experiment comment in keybinds
@@ -1148,5 +1206,5 @@ nano dots/.config/kdeglobals
 ---
 
 _Document created: 2025-12-25_  
-_Last updated: 2026-01-01_  
-_Version: 1.4_
+_Last updated: 2026-01-03_  
+_Version: 1.5_
