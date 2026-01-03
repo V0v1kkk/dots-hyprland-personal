@@ -372,12 +372,14 @@ Singleton {
                     root.modelList = [...root.modelList, ...dataJson];
                     dataJson.forEach(model => {
                         const safeModelName = root.safeModelName(model);
+                        // Use OLLAMA_HOST env var (defaults to localhost:11434)
+                        const ollamaHost = Process.env("OLLAMA_HOST") || "http://localhost:11434";
                         root.addModel(safeModelName, {
                             "name": guessModelName(model),
                             "icon": guessModelLogo(model),
                             "description": Translation.tr("Local Ollama model | %1").arg(model),
                             "homepage": `https://ollama.com/library/${model}`,
-                            "endpoint": "http://localhost:11434/v1/chat/completions",
+                            "endpoint": `${ollamaHost}/v1/chat/completions`,
                             "model": model,
                             "requires_key": false,
                         })

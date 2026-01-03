@@ -4,8 +4,9 @@
 # License: Apache-2.0, can be found in the same folder as this script
 
 # Global Vars
-ollama_url=http://localhost
-port="11434"
+# Use OLLAMA_URL and OLLAMA_PORT from env (Docker on port 1260)
+ollama_url=${OLLAMA_URL:-http://localhost}
+port=${OLLAMA_PORT:-11434}
 blobs=()
 model_name_paths=()
 
